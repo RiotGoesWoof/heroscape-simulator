@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			Heroscape Simulator
+		</title>
+
+		<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+				<script type="text/javascript">
+			$(document).ready(function(){	
+				//add a click handler to the button
+				$("#simulate").click(function(){
+					if ($("#name1").val() == "" || $("#attack1").val() == "" || $("#defense1").val() == "" || $("#name2").val() == "" || $("#attack2").val() == "" || $("#defense2").val() == "" || $("#simNum").val() == "" )
+						{
+							alert("Please fill in all fields!");
+						} //url
+						
+					else{		
+							$("#results").empty();					
+							var aVal = 0;
+							var bVal = 1;
+							var skullNum = 0;
+							var shieldNum = 0;
+							var truTab1 = [
+								[0,0],
+								[0,0]
+							];
+							var truTab2 = [
+								[0,0],
+								[0,0]
+							];
+
+							for (var i=0; i < $("#simNum").val(); i++)
+							{
+								//first roll the attack dice
+								for (var a=0; a < $("#attack1").val(); a++)
+								{
+									var roll = Math.floor((Math.random()*6)+1);
+									if(roll == 1 || roll == 2 || roll == 3)
+									{
+										skullNum++;
+									}
+								}
+								for (var d=0; d < $("#defense2").val(); d++)
+								{
+									var roll = Math.floor((Math.random()*6)+1);
+									if(roll == 4 || roll == 5)
+									{
+										shieldNum++;
+									}
+								}
+								//0A = attack failed, 1B = defense failed.
+								if (skullNum > shieldNum)//atk pass def fail. only true argument
+								{
+									aVal = 1;
+									bVal = 1;
+								}
+								else if (skullNum == shieldNum && skullNum != 0)//both pass
+								{
+									aVal = 1;
+									bVal = 0;
+								}
+								else if (skullNum < shieldNum) //atk fail def pass
+								{
+									aVal = 0;
+									bVal = 0;
+								}
+								else if (skullNum == 0 && shieldNum == 0) //both fail
+								{
+									aVal = 0;
+									bVal = 1;
+								}
+								truTab1[aVal][bVal]+=1;
+								console.log(skullNum + ", " + shieldNum);
+								//reset value
+								skullNum=0;
+								shieldNum=0;
+							}
+							$("#results").append("<table><tr><td></td><td>Defender:</td><td>"+ $("#name2").val()+"</td></tr><tr><td>Attacker:</td><td>"+ truTab1[0][0] +"</td><td>"+ truTab1[0][1] +"</td></tr><tr><td>"+ $("#name1").val() +"</td><td>"+ truTab1[1][0] +"</td><td>"+  truTab1[1][1] +"</td></tr></table>");
+							$("#results").append($("#name1").val() + " successfully attacked " + $("#name2").val() + " " + truTab1[1][1] + " times!");
+							
+							for (var i=0; i < $("#simNum").val(); i++)
+							{
+								//first roll the attack dice
+								for (var a=0; a < $("#attack2").val(); a++)
+								{
+									var roll = Math.floor((Math.random()*6)+1);
+									if(roll == 1 || roll == 2 || roll == 3)
+									{
+										skullNum++;
+									}
+								}
+								for (var d=0; d < $("#defense1").val(); d++)
+								{
+									var roll = Math.floor((Math.random()*6)+1);
+									if(roll == 4 || roll == 5)
+									{
+										shieldNum++;
+									}
+								}
+								//0A = attack failed, 1B = defense failed.
+								if (skullNum > shieldNum)//atk pass def fail. only true argument
+								{
+									aVal = 1;
+									bVal = 1;
+								}
+								else if (skullNum == shieldNum && skullNum != 0)//both pass
+								{
+									aVal = 1;
+									bVal = 0;
+								}
+								else if (skullNum < shieldNum) //atk fail def pass
+								{
+									aVal = 0;
+									bVal = 0;
+								}
+								else if (skullNum == 0 && shieldNum == 0) //both fail
+								{
+									aVal = 0;
+									bVal = 1;
+								}
+								truTab2[aVal][bVal]+=1;
+								console.log(skullNum + ", " + shieldNum);
+								//reset value
+								skullNum=0;
+								shieldNum=0;
+							}
+							$("#results").append("<table><tr><td></td><td>Defender:</td><td>"+ $("#name1").val()+"</td></tr><tr><td>Attacker:</td><td>"+ truTab2[0][0] +"</td><td>"+ truTab2[0][1] +"</td></tr><tr><td>"+ $("#name2").val() +"</td><td>"+ truTab2[1][0] +"</td><td>"+  truTab2[1][1] +"</td></tr></table>");
+							$("#results").append($("#name2").val() + " successfully attacked " + $("#name1").val() + " " + truTab2[1][1] + " times!<br><br>");
+							if(truTab1[1][1] < truTab2[1][1])
+							{
+								$("#results").append("<h1>" + $("#name2").val() + " has defeated " + $("#name1").val() + " by " + (truTab2[1][1]-truTab1[1][1]) + " victories!</h1>");
+							}
+							else if(truTab1[1][1] > truTab2[1][1])
+							{
+								$("#results").append("<h1>" + $("#name1").val() + " has defeated " + $("#name2").val() + " by " + (truTab1[1][1]-truTab2[1][1]) + " victories!</h1>");
+							}
+							else
+							{
+								$("#results").append("<h1>" + $("#name1").val() + " and " + $("#name2").val() + " have both achieved " + truTab1[1][1] + " victories! Nice Balance.</h1>");
+							}
+					}
+				});
+			});
+			</script>
+	</head>
+	<body>
+		<h1>Welcome to the Heroscape basic battle simulator!</h1>
+		<div id = "form">
+			Number of Simulations: <input id='simNum' type = 'number' step=1 min="0" max="1000">
+			<br/>
+			First Hero Name: <input id='name1' type='text' >
+			<br/>
+			First Hero Attack: <input id='attack1' type='number' step=1 min="0" max="10">		
+			<br/>
+			First Hero Defense: <input id='defense1' type='number' step=1 min="0" max="10">
+			<br/>
+			Second Hero Name: <input id='name2' type='text' >
+			<br/>
+			Second Hero Attack: <input id='attack2' type='number' step=1 min="0" max="10">		
+			<br/>
+			Second Hero Defense: <input id='defense2' type='number' step=1 min="0" max="10">
+			<input id='simulate' type='submit' value="Simulate!" >
+		</div>
+		<div id = "results">
+		</div>
+	</body>
+</html>
